@@ -1,0 +1,8 @@
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.venv
+
+# Data
+.data/*
