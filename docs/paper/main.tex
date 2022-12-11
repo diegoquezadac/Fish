@@ -1,0 +1,63 @@
+\documentclass[twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\title{Fish neural network}
+\author{Diego Quezada}
+
+% Eliminar sangrías:
+\setlength{\parindent}{0cm}
+
+% Links sin color
+\usepackage[hidelinks]{hyperref}
+
+% Separación entre parrafos
+\setlength{\parskip}{0.4cm}
+
+% Paquetes de utilidad general
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{physics}
+
+\begin{document}
+\sloppy % Para evitar que referencias se escapen de los márgenes.
+
+\maketitle
+
+% Abstract
+\input{abstract}
+
+% Motivación
+\input{motivacion}
+
+% Estado del arte
+\input{estado_del_arte}
+
+% Descripción
+\input{descripcion}
+
+% Resultados
+\input{resultados}
+
+% Conjuntos de datos
+\input{datos}
+
+% Innovación
+\input{innovacion}
+
+% Conclusión
+\input{conclusion}
+
+% Bibliografía estilo APA:
+\newpage
+\bibliographystyle{apalike-es}
+\bibliography{ref}
+
+
+\end{document}
