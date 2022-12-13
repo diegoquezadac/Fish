@@ -6,6 +6,7 @@
 
 # Data
 *.csv
+data/raw
 
 # Compiled pdf file:
 *.pdf
@@ -40,6 +41,8 @@
 *.run.xml
 *.bst
 
-# .DS_Store
-
+# Python Package
+build
+src.egg-info
+*.pt
 .DS_Store
