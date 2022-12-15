@@ -1,4 +1,4 @@
-from torch.utils.data import DataLoader,Dataset, WeightedRandomSampler
+from torch.utils.data import DataLoader,Dataset,WeightedRandomSampler
 
 class CustomDataset(Dataset):
     def __init__(self, X, y, tokenizer):

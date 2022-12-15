@@ -1,26 +1,26 @@
 from torch import nn
 
 class Fish(nn.Module):
-    def __init__(self, vocab_size, embed_dim, num_class):
+    def __init__(self, vocab_size, embed_dim, num_class, n1=32, n2=16, n3=128, n4=64, n5=32):
         super(Fish, self).__init__()
 
         self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
 
         self.adhoc_encoder = nn.Sequential(
-            nn.Linear(embed_dim, 32),
+            nn.Linear(embed_dim, n1),
             nn.ReLU(),
-            nn.Linear(32, 16),
+            nn.Linear(n1, n2),
             nn.ReLU(),
         )
 
         self.fish = nn.Sequential(
-            nn.Linear(16, 128),
+            nn.Linear(n2, n3),
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(n3, n4),
             nn.ReLU(),
-            nn.Linear(64, 32),
+            nn.Linear(n4, n5),
             nn.ReLU(),
-            nn.Linear(32, num_class),
+            nn.Linear(n5, num_class),
         )
 
         self.softmax = nn.Softmax(dim=1)

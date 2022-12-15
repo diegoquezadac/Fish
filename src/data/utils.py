@@ -15,12 +15,12 @@ def collate_batch(batch, vocab, tokenizer):
     text_list = torch.cat(text_list)
     return text_list, label_list, offsets
 
-def yield_tokens(iterator, tokenizer):
+def _yield_tokens(iterator, tokenizer):
     for text,_ in iterator:
         yield tokenizer(str(text))
 
 def get_vocab(dataset, tokenizer):
     train_iterator = iter(dataset)
-    vocab = build_vocab_from_iterator(yield_tokens(train_iterator, tokenizer), specials=["<unk>"])
+    vocab = build_vocab_from_iterator(_yield_tokens(train_iterator, tokenizer), specials=["<unk>"])
     vocab.set_default_index(vocab["<unk>"])
     return vocab
