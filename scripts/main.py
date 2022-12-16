@@ -1,17 +1,18 @@
 import os
 import torch
 import pandas as pd
+from ray.air import session
 from torchtext.data.utils import get_tokenizer
 from src.data.dataset import CustomDataset
-from torch.utils.data import DataLoader,Dataset,WeightedRandomSampler
+from torch.utils.data import DataLoader
 from functools import partial
 from ray import tune
-from numpy import random
 from src.data.utils import collate_batch
 from src.models.fish import Fish
 from ray import tune
 from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
+from ray.air.checkpoint import Checkpoint
 from torchtext.data.utils import get_tokenizer
 
 def load_data(data_dir):
@@ -50,7 +51,7 @@ def evaluate_fish(model, dataloader, criterion):
             total_count += label.size(0)
     return eval_acc / total_count, eval_loss / total_count
 
-def train_fish(config, checkpoint_dir=None, data_dir=None):
+def train_fish(config, data_dir=None):
 
     # Set training parameters
     num_class = 2
@@ -64,10 +65,10 @@ def train_fish(config, checkpoint_dir=None, data_dir=None):
     optimizer = torch.optim.SGD(model.parameters(), lr=5.0, momentum=0.9)
 
     # Checkpoint state
-    if checkpoint_dir:
-        model_state, optimizer_state = torch.load(
-            os.path.join(checkpoint_dir, "checkpoint")
-        )
+    loaded_checkpoint = session.get_checkpoint()
+    if loaded_checkpoint:
+        with loaded_checkpoint.as_directory() as loaded_checkpoint_dir:
+           model_state, optimizer_state = torch.load(os.path.join(loaded_checkpoint_dir, "checkpoint.pt"))
         model.load_state_dict(model_state)
         optimizer.load_state_dict(optimizer_state)
 
@@ -109,6 +110,8 @@ def train_fish(config, checkpoint_dir=None, data_dir=None):
             optimizer.step()
             train_acc += (predicted_label.argmax(1) == label).sum().item()
             total_count += label.size(0)
+            if idx % 20 == 0:  # print every 2000 mini-batches
+                print("[%d, %5d] accuracy: %.3f" % (epoch + 1, idx + 1, train_acc / total_count))
 
         # Evaluate model
         val_acc, val_loss = evaluate_fish(model, val_dataloader, criterion)
@@ -116,13 +119,15 @@ def train_fish(config, checkpoint_dir=None, data_dir=None):
             scheduler.step()
         else:
             total_acc = val_acc
+        
+        # Checkpoint
+        os.makedirs("fish", exist_ok=True)  
+        torch.save(
+            (model.state_dict(), optimizer.state_dict()), "fish/checkpoint.pt")
+        checkpoint = Checkpoint.from_directory("fish")
 
-    with tune.checkpoint_dir(epoch) as checkpoint_dir:
-        path = os.path.join(checkpoint_dir, "checkpoint")
-        torch.save((model.state_dict(), optimizer.state_dict()), path)
-
-    tune.report(loss=val_loss, accuracy=val_acc)
-
+        # Report results
+        session.report({"loss": val_loss, "accuracy": val_acc}, checkpoint=checkpoint)
 
 def main(num_samples=3, max_num_epochs=10):
 
@@ -133,40 +138,34 @@ def main(num_samples=3, max_num_epochs=10):
     }
 
     scheduler = ASHAScheduler(
-        metric="loss",
-        mode="min",
         max_t=max_num_epochs,
         grace_period=1,
         reduction_factor=2)
 
-    reporter = CLIReporter(
-        # parameter_columns=["l1", "l2", "lr", "batch_size"],
-        metric_columns=["loss", "accuracy", "training_iteration"])
-    
-    result = tune.run(
-        partial(train_fish, data_dir="/Users/diego/dev/fish/data/processed"),
-        resources_per_trial={"cpu": 8},
-        config=config,
-        num_samples=num_samples,
-        scheduler=scheduler,
-        progress_reporter=reporter)
-    print("B")
-    best_trial = result.get_best_trial("loss", "min", "last")
-    print("Best trial config: {}".format(best_trial.config))
+    tuner = tune.Tuner(
+        tune.with_resources(
+            tune.with_parameters(partial(train_fish, data_dir="/Users/diego/dev/fish/data/processed")),
+            resources={"cpu": 2}
+        ),
+        tune_config=tune.TuneConfig(
+            metric="loss",
+            mode="min",
+            scheduler=scheduler,
+            num_samples=num_samples,
+        ),
+        param_space=config,
+    )   
+    results = tuner.fit()
+
+    best_result = results.get_best_result("loss", "min")
+
+    print("Best trial config: {}".format(best_result.config))
     print("Best trial final validation loss: {}".format(
-        best_trial.last_result["loss"]))
+        best_result.metrics["loss"]))
     print("Best trial final validation accuracy: {}".format(
-        best_trial.last_result["accuracy"]))
+        best_result.metrics["accuracy"]))
 
-    best_trained_model = Fish(n3=config["n3"])
-
-    best_checkpoint_dir = best_trial.checkpoint.value
-    model_state, optimizer_state = torch.load(os.path.join(
-        best_checkpoint_dir, "checkpoint"))
-    best_trained_model.load_state_dict(model_state)
-
-    test_acc, _ = evaluate_fish(best_trained_model)
-    print("Best trial test set accuracy: {}".format(test_acc))
+    #evaluate_fish(best_result)
 
 if __name__ == "__main__":
 
