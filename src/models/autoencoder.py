@@ -7,16 +7,20 @@ class Autoencoder(nn.Module):
         self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
         
         self.encoder = nn.Sequential(
-            nn.Linear(embed_dim, 32),
+            nn.Linear(embed_dim, 128),
             nn.ReLU(),
-            nn.Linear(32, 16),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
             nn.ReLU(),
         )
 
         self.decoder = nn.Sequential(
-            nn.Linear(16, 32),
+            nn.Linear(32, 64),
             nn.ReLU(),
-            nn.Linear(32, embed_dim),
+            nn.Linear(64, 128),
+            nn.ReLU(),
+            nn.Linear(128, embed_dim),
             nn.ReLU(),
         )
         self._init_weights()

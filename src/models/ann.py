@@ -2,7 +2,17 @@ from torch import nn
 
 
 class Ann(nn.Module):
-    def __init__(self, vocab_size, embed_dim, num_class, encoder):
+    def __init__(
+        self,
+        vocab_size,
+        embed_dim,
+        encoder,
+        num_class=2,
+        encoder_dim=32,
+        n4=64,
+        n5=32,
+        n6=16,
+    ):
         super(Ann, self).__init__()
 
         self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
@@ -13,13 +23,13 @@ class Ann(nn.Module):
             param.requires_grad = False
 
         self.decoder = nn.Sequential(
-            nn.Linear(16, 128),
+            nn.Linear(encoder_dim, n4),
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(n4, n5),
             nn.ReLU(),
-            nn.Linear(64, 32),
+            nn.Linear(n5, n6),
             nn.ReLU(),
-            nn.Linear(32, num_class),
+            nn.Linear(n6, num_class),
         )
 
         self.softmax = nn.Softmax(dim=1)

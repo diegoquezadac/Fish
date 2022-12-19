@@ -1,6 +1,7 @@
 import torch
 import pandas as pd
 import time
+import logging
 
 def evaluate_classifier(model, dataloader, criterion):
     model.eval()
@@ -26,13 +27,15 @@ def evaluate_autoencoder(model, dataloader, criterion):
             total_count += label.size(0)
     return total_loss / total_count
 
-def train_classifier(model, train_dataloader, val_dataloader, epochs=10):
+def train_classifier(model, train_dataloader, val_dataloader, epochs=10, step_size=20, gamma=0.1, log_file=None):
 
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=5.0)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
-    total_acc = None
+    optimizer = torch.optim.SGD(model.parameters(), lr=1.0)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     log_interval = 1000
+
+    if(log_file):
+        logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG)
 
     # For each epoch
     for epoch in range(1, epochs + 1):
@@ -40,6 +43,7 @@ def train_classifier(model, train_dataloader, val_dataloader, epochs=10):
         model.train()
         epoch_acc, total_count = 0, 0
         start_time = time.time()
+        acc_per_epoch, count_per_apoch = [], []
 
         # For each batch in the training set
         for idx, (text, label, offsets) in enumerate(train_dataloader):
@@ -54,34 +58,43 @@ def train_classifier(model, train_dataloader, val_dataloader, epochs=10):
             if idx % log_interval == 0 and idx > 0:
                 print(
                     "| epoch {:3d} | {:5d}/{:5d} batches "
-                    "| accuracy {:8.3f}".format(
+                    "| accuracy {:8.6f}".format(
                         epoch, idx, len(train_dataloader), epoch_acc / total_count
                     )
                 )
+                acc_per_epoch.append(epoch_acc)
+                count_per_apoch.append(total_count)
                 epoch_acc, total_count = 0, 0
                 start_time = time.time()
         
         # Evaluate the model on the validation set
+        train_acc = sum(acc_per_epoch) / sum(count_per_apoch)
         val_acc = evaluate_classifier(model, val_dataloader, criterion)
 
-        if total_acc is not None and total_acc > val_acc:
-            scheduler.step()
-        else:
-            total_acc = val_acc
-
-        print('-' * 59)
+        print('-' * 100)
         print('| end of epoch {:3d} | time: {:5.2f}s | '
-            'valid accuracy {:8.3f} '.format(epoch,
+            'train accuracy {:8.6f} | validation accuracy {:8.6f} '.format(epoch,
                                             time.time() - start_time,
+                                            train_acc,
                                             val_acc))
-        print('-' * 59)
+        if(log_file):
+            logging.info('| epoch {:3d} | time: {:5.2f}s | '
+            'train accuracy {:8.6f} | validation accuracy {:8.6f} '.format(epoch,
+                                            time.time() - start_time,
+                                            train_acc,
+                                            val_acc))
+        print('-' * 100)
 
-def train_autoencoder(model, train_dataloader, val_dataloader, epochs=10):
+        scheduler.step()
+
+def train_autoencoder(model, train_dataloader, val_dataloader, epochs=10, step_size=20, log_file=None):
 
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=5.0)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
-    total_accu = None
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma=0.1)
+
+    if(log_file):
+        logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG)
 
     # For each epoch
     for epoch in range(1, epochs + 1):
@@ -89,6 +102,7 @@ def train_autoencoder(model, train_dataloader, val_dataloader, epochs=10):
         start_time = time.time()
         model.train()
         epoch_loss, total_count = 0, 0
+        loss_per_epoch, count_per_apoch = [], []
         log_interval = 1000
 
         # For each batch in the training set
@@ -105,23 +119,31 @@ def train_autoencoder(model, train_dataloader, val_dataloader, epochs=10):
                 elapsed = time.time() - start_time
                 print(
                     "| epoch {:3d} | {:5d}/{:5d} batches "
-                    "| loss {:8.3f}".format(
+                    "| loss {:8.6f}".format(
                         epoch, idx, len(train_dataloader), epoch_loss / total_count
                     )
-                )
+                ) 
+                loss_per_epoch.append(epoch_loss)
+                count_per_apoch.append(total_count)
                 epoch_loss, total_count = 0, 0
                 start_time = time.time()
         
         # Evaluate the model on the validation set
-        val_acc = evaluate_autoencoder(model, val_dataloader, criterion)
-        if total_accu is not None and total_accu > val_acc:
-         scheduler.step()
-        else:
-            total_accu = val_acc
+        train_loss = sum(loss_per_epoch) / sum(count_per_apoch)
+        val_loss = evaluate_autoencoder(model, val_dataloader, criterion)
 
         print('-' * 59)
         print('| end of epoch {:3d} | time: {:5.2f}s | '
-            'valid accuracy {:8.3f} '.format(epoch,
+            'train loss {:8.6f} | validation loss {:8.6f} '.format(epoch,
                                             time.time() - start_time,
-                                            val_acc))
+                                            train_loss,
+                                            val_loss))
+        if(log_file):
+            logging.info('| epoch {:3d} | time: {:5.2f}s | '
+            'train loss {:8.6f} | validation loss {:8.6f} '.format(epoch,
+                                            time.time() - start_time,
+                                            train_loss,
+                                            val_loss))
         print('-' * 59)
+
+        scheduler.step()
