@@ -1,8 +1,7 @@
 \documentclass[twocolumn]{article}
-\usepackage{graphicx}
 
-\title{\textbf{Encode Just What You Need}}
-\author{Quezada, Diego \\ diego.quezadac@sansano.usm.cl \and Valle, Carlos \\ carlos.valle@upla.cl}
+\title{\textbf{Encode What You Need}}
+\author{Quezada, Diego \\ diego.quezadac@sansano.usm.cl}
 	
 \usepackage{fontspec}
 \setmainfont{Carlito}
@@ -21,6 +20,8 @@
 
 % Paquetes de utilidad general
 \usepackage{amsmath}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsfonts}
@@ -29,13 +30,15 @@
 \usepackage{bm}
 \usepackage{amssymb}
 \usepackage{physics}
+\usepackage{enumitem}
+
 
 \begin{document}
 \sloppy % Para evitar que referencias se escapen de los márgenes.
 
 \maketitle
 
-% Abstract
+% Abstract|
 \input{abstract}
 
 \textbf{\textit{Keywords}:} \textit{Autoencoders}, \textit{Dimensionality Reduction}, \textit{Feature Learning}.
@@ -49,22 +52,18 @@
 % Descripción
 \input{descripcion}
 
-% Experimento
-% \input{experimento}
-
 % Resultados
-% \input{resultados}
+\input{resultados}
 
 % Innovación
-% \input{innovacion}
+\input{innovacion}
 
 % Conclusión
-% \input{conclusion}
+\input{conclusion}
 
 % Bibliografía estilo APA:
 \newpage
 \bibliographystyle{apalike-es}
 \bibliography{ref}
-
 
 \end{document}

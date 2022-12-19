@@ -1,1 +1,9 @@
-\section*{Conclusión}
+\section{Conclusión}
+
+En los experimentos realizados, \textbf{Fish} mediante sus representaciones de menor dimensionalidad \textit{ad-hoc} al problema supervisado supera, en general, al rendimiento de un modelo compuesto por un codificador de un \textit{Autoencoder} seguido de una red neuronal artificial totalmente conectada. Este resultado es \textbf{clave}, pues valida la motivación inicial de esta investigación al informar que las codificaciones obtenidas mediante un \textit{Autoencoder} no necesariamente capturan los mejores atributos ocultos para, posteriormente, resolver un problema supervisado.
+
+La arquitectura \textbf{Fish} requiere considerablemente un menor tiempo de computación para su entrenamiento sin sacrificar su rendimiento. Esto es de esperarse pues el codificador $f_2$ es aprendido de manera simultánea con la hipótesis $h_2$ que aprende a resolver el problema supervisado.
+
+El siguiente paso para esta investigación es estudiar la calidad de la representaciones y analizar su capacidad para ser transferidas a problemas supervisados similares.
+
+El código fuente que permite reproducir los resultados de esta investigación se encuentran disponible en \emph{https://github.com/diegoquezadac/Fish}.
