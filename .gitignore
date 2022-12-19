@@ -46,3 +46,4 @@ build
 src.egg-info
 *.pt
 .DS_Store
+*.pyc
