@@ -1,9 +1,11 @@
 \section{Resultados}
 
 
-En la siguiente tabla se detallan los resultados obtenidos para ambas arquitecturas en el conjunto de entrenamiento:
+En \ref{fig:resultados-fish} se detallan los resultados obtenidos para ambas arquitecturas en el conjunto de prueba. Solo para tres configuraciones, la arquitectura que utiliza un \textit{Autoencoder} tiene un mejor \textit{F1-Score} que la arquitectura propuesta \textit{Fish}.
 
-\begin{table}[h]
+El uso de \textit{F1 Score} es necesario pues, tal como se mencionó en la sección 2.3, el conjunto de datos de prueba mantiene la proporción del $10\%$ de \textit{tweets} tóxicos del conjunto de datos original. Mientras que métricas como el \textit{accuracy} ocultan la verdadera capacidad de generalización de modelos cuando se miden en un conjunto de datos desbalanceado, \textit{F1 Score} informa una media armónica entre la \textit{precision} y el \textit{recall}: dos métricas que miden con mayor robustez el desempeño en este tipo de conjuntos de datos.
+
+\begin{table}[ht]
 \begin{tabularx}{.45\textwidth}{||l|X|X|X|X||}
 \hline
 Embedding & Neuronas & F1 Score FNN & F1 Score Fish                  \\ \hline\hline
@@ -17,9 +19,5 @@ Embedding & Neuronas & F1 Score FNN & F1 Score Fish                  \\ \hline\h
 512       &    128   & 0.709508     & 0.722067 \cellcolor{green!20}  \\ \hline
 512       &    256   & 0.717080     & 0.720137 \cellcolor{green!20}  \\ \hline
 \end{tabularx}
-\caption{\label{fig:resultados-fish} \textit{F1-score} en el conjunto de entrenamiento para ambas arquitecturas}
+\caption{\label{fig:resultados-fish} \textit{F1-score} en el conjunto de prueba para ambas arquitecturas}
 \end{table}
-
-Solo para tres configuraciones, la arquitectura que utiliza un \textit{Autoencoder} tiene un mejor \textit{F1-Score} que la arquitectura propuesta \textit{Fish}.
-
-El uso de \textit{F1 Score} es necesario pues, tal como se mencionó en la sección 2.3, el conjunto de datos de prueba mantiene la proporción del $10\%$ de \textit{tweets} tóxicos del conjunto de datos original. Mientras que métricas como el \textit{accuracy} ocultan la verdadera capacidad de generalización de modelos cuando se miden en un conjunto de datos desbalanceado, \textit{F1 Score} informa una media armónica entre la \textit{precision} y el \textit{recall}: dos métricas que miden con mayor robustez el desempeño en este tipo de conjuntos de datos.

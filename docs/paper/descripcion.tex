@@ -12,20 +12,20 @@ En la presente investigación, se compara el desempeño de dos algoritmos de red
 
 En \ref{fig:autoencoder} se presenta una arquitectura estándar de un \textit{Autoencoder Undercomplete}. Consiste en una red neuronal artificial totalmente conectada que es entrenada para codificar la entrada $\mathbf{X}$ a una representación de menor dimensionalidad mediante el codificador $f_1$ y luego reconstruir $\mathbf{X}$ minimizando una función de pérdida $\ell(\bm{x},g(f_1(\bm{x})))$ como la pérdida cuadrática que penaliza $g(f_1(\bm{x}))$ en función de cuánto difere con $\bm{x}$.
 
-Como en el contexto de aprendizaje supervisado la tarea es conseguir una hipótesis $h_1$ que permita \textit{mapear} desde un conjunto de entrada $\mathcal{X}$ hacia un conjunto de salida $\mathcal{Y}$, una vez entrenado el \textit{Autoencoder} $(g \circ f_1)(x)$ se utiliza el codificador $f_1$ para codificar las entradas a un nuevo modelo $h_{1}$. 
-
-\begin{figure}[h] % TODO: Actualizar
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.4\textwidth]{autoencoder}
 \caption{\label{fig:autoencoder} \textit{Autoencoder Undercomplete}}
 \end{figure}
 
+Como en el contexto de aprendizaje supervisado la tarea es conseguir una hipótesis $h_1$ que permita \textit{mapear} desde un conjunto de entrada $\mathcal{X}$ hacia un conjunto de salida $\mathcal{Y}$, una vez entrenado el \textit{Autoencoder} $(g \circ f_1)(x)$ se utiliza el codificador $f_1$ para codificar las entradas a un nuevo modelo $h_{1}$. 
+
 
 En \ref{fig:fish} se presenta la arquitectura neuronal \textbf{Fish} propuesta. Consiste en una clásica red neuronal artificial totalmente conectada que es entrenada para aprender \textbf{simultaneamente} la codificación \textit{ad-hoc} $f_2$ y la tarea supervisada $h_2\colon \mathcal{X} \rightarrow \mathcal{Y}$ . Primero, sus primeras capas se encogen para lograr una representación de menor dimensionalidad; Segundo, una capa expande esta representación; Tercero, las siguientes capas se encogen hasta la capa de salida.
 
-\begin{figure}[h] % TODO: Actualizar
+\begin{figure}[h]
 \centering
-\includegraphics[width=0.45\textwidth]{fish}
+\includegraphics[width=0.4\textwidth]{fish}
 \caption{\label{fig:fish} Red Neuronal Fish}
 \end{figure}
 
@@ -60,7 +60,7 @@ Para \textit{tokenizar} cada \textit{tweet} se utilizó el \textit{tokenizador} 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.5\textwidth]{tokens}
+\includegraphics[width=0.4\textwidth]{tokens}
 \caption{\label{fig:tokens} Distribución del número de \textit{tokens} por \textit{tweet}}
 \end{figure}
 

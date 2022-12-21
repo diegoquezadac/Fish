@@ -1,4 +1,9 @@
 \section{Estado del arte}
 
-\cite{murphy2012machine}
-% TODO: Estado del arte de Autoencoder.
+La \textbf{reducción de dimensionalidad} es un proceso que proyecta datos de alta dimensión en espacio dimensional mucho más pequeño \cite{sarveniazi}. Mediante algoritmos clásicos tales como \textit{PCA},\textit{LDA} o \textit{K-Means} se puede realizar esta tarea obtiendo incluso resultados del estado del arte \cite{Coates2012}. Desde la introducción del pre-entrenamiento no supervisado, y considerando el interés actual por el aprendizaje profundo, muchos esquemas en donde se apilan capas de atributos para construir representaciones profundas han sido propuestos: \textit{sparse-coding}, \textit{RBMs}, \textit{sparse RBMs} y \textit{Autoencoders} por ejemplo \cite{coates}.
+
+El objetivo del \textbf{aprendizaje de representaciones} (\textit{representation learning}) es aprender representaciones de los datos que permitan extraer información útil a partir de ellas \cite{DBLP:journals/corr/abs-1206-5538}. En este sentido, se define una buena representación como aquella que es útil cuando se utiliza como entrada para un modelo supervisado.
+
+En la comunidad del aprendizaje de representaciones se han desarollado dos amplias líneas paralelas de investigación: una basada en modelos gráficos probabilísticos y la otra en redes neuronales artificiales, siendo representadas respectivamente por las Máquinas de \textit{Boltzmann} restringidas y los \textit{Autoencoders} junto a todas sus variantes.
+
+Hasta la fecha y según el conocimiento del autor, todos los algoritmos propuestos para aprender representaciones son no supervisados, o bien, auto supervisados y, por ende, no realizan una codificación \textit{ad-hoc} a un problema supervisado.
